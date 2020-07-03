@@ -1,9 +1,12 @@
 from guiABLE import *
 from tkinter import filedialog
+from tkinter import simpledialog
+from tkinter import tkFileDialog
 from tkinter import font
 import keyboard
 from time import sleep
 import webbrowser
+from pytube import YouTube
 
 
 class CheckList(tk.Frame):
@@ -467,6 +470,22 @@ class GUI(Windowable):
                 self.file_lbl.config(text="Incompatible File")
                 self.status_lbl.config(text="No patterns loaded")
                 [child.destroy() for child in self.scroll_test.inner.winfo_children()]
+
+    def progress_function(self, stream, chunk, bytes_remaining):
+        print(round((1-bytes_remaining/stream.filesize)*100, 3), '% done...')
+
+    def loadVideo(self) {
+        #### DEVELOPER OF PYTUBE APPEARS TO HAVE STEPPED DOWN. PACKAGE MAY STOP WORKING AT ANY TIME ####
+        url = simpledialog.askstring("Input", "Video URL",
+                                parent=application_window)
+        save_path = tkFileDialog.asksaveasfile(mode='w')
+
+        if url:
+            yt = YouTube(url, on_progress_callback=progress_func)
+            video = yt.streams.filter(adaptive=True).order_by('resolution').first().download(save_path)
+        else:
+            print('Great, you broke something.')
+    }
 
     def on_exit(self):
         self.closing = True
