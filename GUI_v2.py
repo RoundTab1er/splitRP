@@ -481,7 +481,10 @@ class GUI(Windowable):
         save_path = tkFileDialog.asksaveasfile(mode='w')
 
         if url:
-            yt = YouTube(url, on_progress_callback=progress_func).streams.get_highest_resolution().download(save_path)
+            try:
+                yt = YouTube(url, on_progress_callback=progress_func).streams.get_highest_resolution().download(save_path)
+            except:
+                print('You really like breaking things, don\'t you?')
         else:
             print('Great, you broke something.')
 
