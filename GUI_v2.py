@@ -482,7 +482,7 @@ class GUI(Windowable):
 
         if url:
             try:
-                yt = YouTube(url, on_progress_callback=progress_func).streams.get_highest_resolution().download(save_path)
+                yt = YouTube(url, on_progress_callback=self.progress_function).streams.get_highest_resolution().download(save_path)
             except:
                 print('You really like breaking things, don\'t you?')
         else:
