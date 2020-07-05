@@ -95,36 +95,21 @@ class VideoAnalyzer(tk.Tk):
     def download_video(self):
         #### DEVELOPER OF PYTUBE APPEARS TO HAVE STEPPED DOWN. PACKAGE MAY STOP WORKING AT ANY TIME ####
         url = simpledialog.askstring("Input", "Video URL")
-        #save_path = filedialog.asksaveasfile(filetypes=(("MP4s", "*.mp4"), ("all files", "*.*")))
-        save_path = filedialog.asksaveasfilename()
-
-        print(save_path)
+        
+        save_path = filedialog.asksaveasfilename() #filetypes=(("MP4s", "*.mp4"), ("all files", "*.*"))
         filename = save_path.split('/')[-1]
-
         path = save_path.split(filename)[0]
 
+        print(save_path)
         print(filename)
         print(path)
-
-        i = 0
-        while i < 10000:
-            i += 1
-
-        #while True:
-        #    pass
 
         if url:
             try:
                 print('Downloading: ', url)
-                #yt = YouTube(url, 
-                #    on_progress_callback=self.progress_function).streams.get_highest_resolution().download(path + '/', filename=filename)
-
                 yt = YouTube(url, on_progress_callback=self.progress_function).streams.filter(adaptive=True).order_by('resolution').desc()[1].download(path, filename=filename)
 
-                path = save_path
-                print(path)
-
-                self.loadFile(filename=path + '.mp4')
+                self.loadFile(filename=save_path + '.mp4')
             except Exception as err:
                 print('You really like breaking things, don\'t you?')
                 print(err)
