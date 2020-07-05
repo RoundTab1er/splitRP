@@ -6,6 +6,11 @@ from math import floor
 from sys import exit
 import time
 
+from tkinter import simpledialog
+from tkinter import filedialog
+from pytube import YouTube
+import os
+
 
 def array2tk(array, width, height):
     out = cv2.resize(array, (width, height), interpolation=cv2.INTER_NEAREST)
@@ -29,6 +34,7 @@ class VideoAnalyzer(tk.Tk):
         self.resizable(0, 0)
         file = tk.Menu(menu, tearoff=False)
         file.add_command(label="Open", command=self.openfile)
+        file.add_command(label="Download", command=self.download_video)
         file.add_command(label="Exit", command=exit)
         menu.add_cascade(label="File", menu=file)
         # --- Screen ---
@@ -78,7 +84,55 @@ class VideoAnalyzer(tk.Tk):
     def openfile(self):
         filename = filedialog.askopenfilename(initialdir=".", title="Select file",
                                               filetypes=(("MP4s", "*.mp4"), ("all files", "*.*")))
-        if filename is not "":
+
+        print(filename)
+
+        self.loadFile(filename=filename)
+        
+    def progress_function(self, stream, chunk, bytes_remaining):
+        print(round((1-bytes_remaining/stream.filesize)*100, 3), '% done...')
+
+    def download_video(self):
+        #### DEVELOPER OF PYTUBE APPEARS TO HAVE STEPPED DOWN. PACKAGE MAY STOP WORKING AT ANY TIME ####
+        url = simpledialog.askstring("Input", "Video URL")
+        #save_path = filedialog.asksaveasfile(filetypes=(("MP4s", "*.mp4"), ("all files", "*.*")))
+        save_path = filedialog.asksaveasfilename()
+
+        print(save_path)
+        filename = save_path.split('/')[-1]
+
+        path = save_path.split(filename)[0]
+
+        print(filename)
+        print(path)
+
+        i = 0
+        while i < 10000:
+            i += 1
+
+        #while True:
+        #    pass
+
+        if url:
+            try:
+                print('Downloading: ', url)
+                #yt = YouTube(url, 
+                #    on_progress_callback=self.progress_function).streams.get_highest_resolution().download(path + '/', filename=filename)
+
+                yt = YouTube(url, on_progress_callback=self.progress_function).streams.filter(adaptive=True).order_by('resolution').desc()[1].download(path, filename=filename)
+
+                path = save_path
+                print(path)
+
+                self.loadFile(filename=path + '.mp4')
+            except Exception as err:
+                print('You really like breaking things, don\'t you?')
+                print(err)
+        else:
+            print('Great, you broke something.')
+
+    def loadFile(self, filename=None):
+        if filename is not None:
             self.screen.load_video(filename)
             self.timeline.reset()
             self.timeline.set_frames(self.screen.total_frames)
